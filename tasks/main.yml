@@ -1,0 +1,4 @@
+---
+# tasks file for ml_infn setup
+
+ - include: ml_infn_install.yml

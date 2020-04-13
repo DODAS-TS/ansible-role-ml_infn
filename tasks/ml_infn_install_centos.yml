@@ -1,0 +1,66 @@
+---
+- name: install emacs nano  on RHEL based distros
+  #need to extend with version support
+  yum:
+    name: 
+      - vim
+      - emacs 
+      - nano
+      - git
+      - python36
+      - python36-root
+      - root
+      - xeyes
+      - xauth
+  register: install_yum_repo
+
+- name: add the magic cookie
+  shell: xauth add :0 . `mcookie`
+
+- name: add the magic cookie
+  shell: xauth add :0 . `mcookie`
+  become_user: "{{ ml_user }}"
+
+- name: install cvmfs repo
+  yum:
+    name: 'https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm' 
+    state: present
+  register: install_cvmfs_repo
+  
+- name: Install cvmfs packages
+  yum:
+    name:
+      - cvmfs
+      - cvmfs-config-default
+    update_cache: yes
+    state: present
+  register: install_cvmfs_packages
+
+- name: create/update file /etc/cvmfs/default.local
+  blockinfile:
+    dest: /etc/cvmfs/default.local
+    create: yes
+    content: |
+      CVMFS_HTTP_PROXY=DIRECT
+      CVMFS_REPOSITORIES='{% for item in cvmfs_repositories %}{{item}}{% if not loop.last %},{% endif %}{% endfor %}' 
+  register: install_cvmfs_packages
+
+- name: Creates CVMFS mountpoint for repos
+  file:
+     path=/cvmfs/{{item}}
+     state=directory 
+     owner=cvmfs 
+     group=cvmfs 
+     recurse=yes
+  with_items: "{{ cvmfs_repositories }}"
+
+- name: 
+     mount CVMFS {{item}}
+  command:
+     mount -t cvmfs {{ item }} /cvmfs/{{ item }}
+  with_items: "{{ cvmfs_repositories }}"
+  register: result
+  until: result | success
+  retries: 10
+  delay: 10
+
