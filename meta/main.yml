@@ -1,7 +1,7 @@
 galaxy_info:
   role_name: ml_infn
   author: spiga@pg.infn.it
-  description: Install pip and packages
+  description: Setup INFN ML environment
   company: INFN
   license: Apache
   min_ansible_version: 2.0
