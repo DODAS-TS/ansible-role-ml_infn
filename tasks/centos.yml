@@ -19,7 +19,7 @@
   command:
      update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
   when: install_yum_repo
-  registr: update_alternatives_install
+  register: update_alternatives_install
 
 - name: update alternatives set python3.6
   command: 
@@ -31,6 +31,7 @@
 
 - name: add the magic cookie
   shell: xauth add :0 . `mcookie`
+  become: yes
   become_user: "{{ ml_user }}"
 
 - name: install cvmfs repo
@@ -76,14 +77,29 @@
   retries: 10
   delay: 10
 
-- name: Download file and force basic auth
-  get_url:
-    url: "{{ ml_test_url }}"
-    dest: $HOME 
-    force_basic_auth: yes
+- name: Unarchive ML_Test files archive that needs to be downloaded
+  unarchive:
+    src: "{{ ml_test_url }}"
+    dest: $HOME
+    remote_src: yes
+  become: yes
+  become_user: "{{ ml_user }}"
+
+- name: create need dirs
+  shell: mkdir -p $HOME/.jupyter && mkdir -p $HOME/notebooks
+  become: yes
+  become_user: "{{ ml_user }}"
+
+- name: Configure token
+  template:
+    src: jupyter_notebook_token_config.py
+    dest: $HOME/.jupyter/jupyter_notebook_config.py
+    owner: "{{ ml_user }}"
+  become: yes
   become_user: "{{ ml_user }}"
 
 - name: Launch jupyter notebook
-    shell: cd $HOME/notebooks && $HOME/.local/bin/jupyter notebook --no-browser --ip 0.0.0.0 --port {{ jupyter_port }}> $HOME/log_jupyter.txt &
-    become: true
+  shell: 
+    cd $HOME/notebooks && jupyter notebook --no-browser --ip 0.0.0.0 --port "{{ jupyter_port | int }}" > $HOME/log_jupyter.txt &
+  become: yes
   become_user: "{{ ml_user }}"
