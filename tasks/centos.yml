@@ -1,4 +1,9 @@
 ---
+- name: First upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
 - name: install emacs nano  on RHEL based distros
   #need to extend with version support
   yum:
@@ -15,16 +20,16 @@
       - wget
   register: install_yum_repo
 
-- name: update alternatives install
-  command:
-     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
-  when: install_yum_repo
-  register: update_alternatives_install
+#- name: update alternatives install
+#  command:
+#     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+#  when: install_yum_repo
+#  register: update_alternatives_install
 
-- name: update alternatives set python3.6
-  command: 
-     update-alternatives  --set python /usr/bin/python3.6
-  when: update_alternatives_install
+#- name: update alternatives set python3.6
+#  command: 
+#     update-alternatives  --set python /usr/bin/python3.6
+#  when: update_alternatives_install
 
 - name: add the magic cookie
   shell: xauth add :0 . `mcookie`
