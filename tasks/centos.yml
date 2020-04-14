@@ -1,8 +1,8 @@
 ---
-- name: First upgrade all packages
-  yum:
-    name: '*'
-    state: latest
+#- name: First upgrade all packages
+#  yum:
+#    name: '*'
+#    state: latest
 
 - name: install emacs nano  on RHEL based distros
   #need to extend with version support
