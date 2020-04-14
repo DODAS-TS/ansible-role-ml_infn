@@ -12,7 +12,19 @@
       - root
       - xeyes
       - xauth
+      - wget
   register: install_yum_repo
+
+- name: update alternatives install
+  command:
+     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+  when: install_yum_repo
+  registr: update_alternatives_install
+
+- name: update alternatives set python3.6
+  command: 
+     update-alternatives  --set python /usr/bin/python3.6
+  when: update_alternatives_install
 
 - name: add the magic cookie
   shell: xauth add :0 . `mcookie`
@@ -64,3 +76,14 @@
   retries: 10
   delay: 10
 
+- name: Download file and force basic auth
+  get_url:
+    url: "{{ ml_test_url }}"
+    dest: $HOME 
+    force_basic_auth: yes
+  become_user: "{{ ml_user }}"
+
+- name: Launch jupyter notebook
+    shell: cd $HOME/notebooks && $HOME/.local/bin/jupyter notebook --no-browser --ip 0.0.0.0 --port {{ jupyter_port }}> $HOME/log_jupyter.txt &
+    become: true
+  become_user: "{{ ml_user }}"
