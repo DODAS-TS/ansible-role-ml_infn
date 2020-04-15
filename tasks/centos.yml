@@ -128,6 +128,8 @@
     line: '#!/usr/bin/python2.7'
     backrefs: yes
   become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7 
   
 - name: finally patch yum (urlgrabber)
   lineinfile:
@@ -136,4 +138,6 @@
     line: '#! /usr/bin/python2.7'
     backrefs: yes
   become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7 
 
