@@ -25,7 +25,7 @@
       - davix
     state: present
   vars:
-    ansible_python_interpreter: /usr/bin/python
+    ansible_python_interpreter: /usr/bin/python2.7
   register: install_yum_repo 
 
 - name: add the magic cookie
@@ -41,7 +41,7 @@
     name: 'https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm' 
     state: present
   vars:
-    ansible_python_interpreter: /usr/bin/python
+    ansible_python_interpreter: /usr/bin/python2.7
   register: install_cvmfs_repo
   
 - name: Install cvmfs packages
@@ -52,7 +52,7 @@
     update_cache: yes
     state: present
   vars:
-    ansible_python_interpreter: /usr/bin/python
+    ansible_python_interpreter: /usr/bin/python2.7
   register: install_cvmfs_packages
 
 - name: create/update file /etc/cvmfs/default.local
