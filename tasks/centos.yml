@@ -127,7 +127,7 @@
     backrefs: yes
   become: true
   
-  - name: finally patch yum (urlgrabber)
+- name: finally patch yum (urlgrabber)
   lineinfile:
     dest: /usr/libexec/urlgrabber-ext-down
     regexp: '^\s*#! /usr/bin/python*$'
