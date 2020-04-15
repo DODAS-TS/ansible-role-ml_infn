@@ -1,8 +1,10 @@
 ---
-#- name: First upgrade all packages
-#  yum:
-#    name: '*'
-#    state: latest
+- name: Update all packages first
+  yum:
+    name: '*'
+    state: present
+    update_cache: true
+  become: true
 
 - name: install emacs nano  on RHEL based distros
   #need to extend with version support
@@ -115,3 +117,20 @@
   command: 
      update-alternatives  --set python /usr/bin/python3.6
   when: update_alternatives_install
+
+- name: finally patch yum 
+  lineinfile:
+    dest: /bin/yum
+    regexp: '^\s*#!/usr/bin/python*$'
+    line: '#!/usr/bin/python2.7'
+    backrefs: yes
+  become: true
+  
+  - name: finally patch yum (urlgrabber)
+  lineinfile:
+    dest: /usr/libexec/urlgrabber-ext-down
+    regexp: '^\s*#! /usr/bin/python*$'
+    line: '#! /usr/bin/python2.7'
+    backrefs: yes
+  become: true
+
