@@ -18,18 +18,10 @@
       - xeyes
       - xauth
       - wget
-  register: install_yum_repo
-
-#- name: update alternatives install
-#  command:
-#     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
-#  when: install_yum_repo
-#  register: update_alternatives_install
-
-#- name: update alternatives set python3.6
-#  command: 
-#     update-alternatives  --set python /usr/bin/python3.6
-#  when: update_alternatives_install
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+  register: install_yum_repo 
 
 - name: add the magic cookie
   shell: xauth add :0 . `mcookie`
@@ -43,6 +35,8 @@
   yum:
     name: 'https://ecsft.cern.ch/dist/cvmfs/cvmfs-release/cvmfs-release-latest.noarch.rpm' 
     state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python
   register: install_cvmfs_repo
   
 - name: Install cvmfs packages
@@ -52,6 +46,8 @@
       - cvmfs-config-default
     update_cache: yes
     state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python
   register: install_cvmfs_packages
 
 - name: create/update file /etc/cvmfs/default.local
@@ -108,3 +104,14 @@
     cd $HOME/notebooks && jupyter notebook --no-browser --ip 0.0.0.0 --port "{{ jupyter_port | int }}" > $HOME/log_jupyter.txt &
   become: yes
   become_user: "{{ ml_user }}"
+
+- name: update alternatives install
+  command:
+     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+  when: install_yum_repo
+  register: update_alternatives_install
+
+- name: update alternatives set python3.6
+  command: 
+     update-alternatives  --set python /usr/bin/python3.6
+  when: update_alternatives_install
