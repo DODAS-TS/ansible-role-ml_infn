@@ -20,6 +20,7 @@
       - xeyes
       - xauth
       - wget
+      - davix
     state: present
   vars:
     ansible_python_interpreter: /usr/bin/python
