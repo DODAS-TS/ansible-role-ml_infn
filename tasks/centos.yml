@@ -1,12 +1,12 @@
 ---
-- name: Update all packages first
-  yum:
-    name: '*'
-    state: latest
-    update_cache: true
-  become: true
-  vars:
-    ansible_python_interpreter: /usr/bin/python2.7  
+#- name: Update all packages first
+#  yum:
+#    name: '*'
+#    state: latest
+#    update_cache: true
+#  become: true
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python2.7  
 
 - name: install emacs nano  on RHEL based distros
   #need to extend with version support
